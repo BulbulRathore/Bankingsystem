@@ -8,7 +8,7 @@ class Bank
 {
     private:
     char name[20];
-    char phone_no[12];
+    char phone_no[15];
     char email[30];
     int dep_amt;
     char password[20];
