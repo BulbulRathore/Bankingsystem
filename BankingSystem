@@ -34,7 +34,7 @@ class Bank
         cin.getline(phone_no,11);        
         cout<<"Enter User E-mail ID :: ";
         cin.getline(email,29);
-        cout<<"\n#####--Minimum Deposit amount is 1000 RS-- ##### \n";
+        cout<<"\n#*******--Minimum Deposit amount is 1000 RS-- ##### \n";
         cout<<"Deposition to bank account :: ";
         cin>>dep_amt;
         while(dep_amt<1000)
