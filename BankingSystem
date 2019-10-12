@@ -79,7 +79,7 @@ class Bank
         void show()
     {
         cout<<"|**********|*********|**********|*******|******|\n";
-        cout<<"|         User name           |       Phone no.           |            E-mail ID         |   Deposited Money   |    Bank Id    |\n";
+        cout<<"|  User name  |     Phone no.    |      E-mail ID   |   Deposited Money   |    Bank Id    |\n";
         cout<<"|*************************************|******|\n";
         cout<<"     "<<name<<"                    "<<phone_no<<"                      "<<email<<"            "<<dep_amt<<"/-            "<<id<<" "<<"\n";         
         cout<<"********************************************\n\n";           
@@ -107,7 +107,7 @@ class Bank
 
 void Bank :: Updation()
 {
-     int c,flag = 0,flag1 = 1;
+     int c,flag=0,flag1 = 1;
      long int x = sizeof(*this);
         char pass[20];
   l:    cout<<"\nEnter your Bank Id :: ";
@@ -163,7 +163,7 @@ void Bank :: Deletion()
     fin.open("file.bin",ios::in|ios::binary);
     if(!fin)
     {
-        cout<<"\nFile not found\n";
+        cout<<"\nError: File not found\n";
     }
     else{
         fout.open("file1.bin",ios::out|ios::binary);
