@@ -1,0 +1,501 @@
+#include<iostream>
+#include<fstream>
+#include<cstring>
+#include<string>
+using namespace std;
+int Id_num1();
+class Bank
+{
+    private:
+    char name[20];
+    char phone_no[12];
+    char email[30];
+    int dep_amt;
+    char password[20];
+    int id;
+
+    public:
+    Bank()
+    {
+        strcpy(name,"no name");
+        strcpy(phone_no,"no number");
+        strcpy(email,"no email");
+        dep_amt = 0;
+        strcpy(password,"0");
+        id = 0; 
+    }
+
+        void read()
+    {
+        cout<<"Enter User Name :: ";
+        cin.ignore(1);
+        cin.getline(name,19);
+        cout<<"Enter Phone Number :: ";
+        cin.getline(phone_no,11);        
+        cout<<"Enter User E-mail ID :: ";
+        cin.getline(email,29);
+        cout<<"\n#####--Minimum Deposit amount is 1000 RS-- ##### \n";
+        cout<<"Deposition to bank account :: ";
+        cin>>dep_amt;
+        while(dep_amt<1000)
+        {
+            cout<<"\n*Deposit money is not sufficiant*\nPlease deposit atleast 1000 RS :: ";
+            cin>>dep_amt;
+        }
+        cout<<"Enter the password for account :: ";
+        cin.ignore(1);
+        cin.getline(password,19);
+        id = Id_num1(); 
+         cout<<name<<" your Bank ID is :: "<<id<<"\n\n";
+    } 
+
+      void read1()
+    {
+        cout<<"Enter User Name :: ";
+        char c;
+        cin.getline(name,19);
+        cout<<"Enter Phone Number :: ";
+        cin.getline(phone_no,11);        
+        cout<<"Enter User E-mail ID :: ";
+        cin.getline(email,29);
+        cout<<"Enter the password for account :: ";
+        cin.ignore(1);
+        cin.getline(password,19);
+    l:  cout<<"Do you want to change Your Bank Id (Y/N) :: ";
+        cin>>c;
+        if(c == 'y' || c == 'Y')
+        {
+             id = Id_num1(); 
+         cout<<name<<" your Bank ID is :: "<<id<<"\n\n";
+        }
+        else if(c == 'n' || c == 'N')
+        {
+           cout<<name<<" your Bank ID is :: "<<id<<"\n\n";
+        }else{
+            cout<<"*Invalid character is Entered*\n";
+            goto l;
+        }
+    }
+        void show()
+    {
+        cout<<"|**********|*********|**********|*******|******|\n";
+        cout<<"|         User name           |       Phone no.           |            E-mail ID         |   Deposited Money   |    Bank Id    |\n";
+        cout<<"|*************************************|******|\n";
+        cout<<"     "<<name<<"                    "<<phone_no<<"                      "<<email<<"            "<<dep_amt<<"/-            "<<id<<" "<<"\n";         
+        cout<<"********************************************\n\n";           
+    }
+
+    void show1()
+    {
+        cout<<"\n"<<name<<" :: deposition is successful to Bank Id no.  :: "<<id<<"\n";
+        cout<<"Total deposited amount to your account :: "<<dep_amt<<"/-\n\n";
+    }
+    void show2()
+    {
+        cout<<"Total amount to your account after withdrown :: "<<dep_amt<<"/-\n\n";
+    }
+
+    int storedata();
+    void Allaccount();
+    void Deposition();
+    void Withdrown();
+    void Info();
+    void Deletion();
+    void Updation();
+
+};
+
+void Bank :: Updation()
+{
+     int c,flag = 0,flag1 = 1;
+     long int x = sizeof(*this);
+        char pass[20];
+  l:    cout<<"\nEnter your Bank Id :: ";
+        cin>>c;
+        cin.ignore(1);
+        cout<<"Enter your Password :: ";
+        cin.getline(pass,19);
+        fstream file;
+        file.open("file.bin",ios::in | ios::out | ios::ate | ios::binary);
+        file.seekg(0);
+        file.read((char *)this,sizeof(*this));
+        while(!file.eof())
+        {
+            if(id == c && !strcmp(pass,password))
+            {
+                flag = 1;
+                read1();
+                file.seekp(file.tellp()-x);
+                file.write((char*)this,sizeof(*this));
+                
+            }
+            file.read((char*)this,sizeof(*this));
+        } 
+         file.close();
+        if(flag == 0)
+        {
+            cout<<"Password and Id is not valid...please try again\n";
+            flag1++;
+        }
+        else{
+            goto m;
+        }
+        if(flag1<=3)
+        {
+            goto l;
+        }
+        else{
+           cout<<"account is Locked due to wrong attempt\n";
+        }
+  m: ;
+} 
+void Bank :: Deletion()
+{
+     int c;
+     char pass[20];
+     cout<<"\nEnter your Bank Id :: ";
+        cin>>c;
+        cin.ignore(1);
+        cout<<"Enter your Password :: ";
+        cin.getline(pass,19);
+    ifstream fin;
+    ofstream fout;
+    fin.open("file.bin",ios::in|ios::binary);
+    if(!fin)
+    {
+        cout<<"\nFile not found\n";
+    }
+    else{
+        fout.open("file1.bin",ios::out|ios::binary);
+        fin.read((char *)this,sizeof(*this));
+        while(!fin.eof()){
+            if(!strcmp(pass,password))
+            {
+                cout<<"password is matched\n";
+            }else{
+                if(id != c )
+               {
+                 fout.write((char*)this,sizeof(*this));
+               }
+            }
+            fin.read((char*)this,sizeof(*this));
+        }
+        fin.close();
+        fout.close();
+        remove("file.bin");
+        rename("file1.bin","file.bin");
+        cout<<name<<" Your account is closed\n";   
+    }
+}
+
+void Bank :: Info()
+{
+       int c,flag = 0,flag1 = 1;
+        char pass[20];
+ l:   cout<<"\nEnter your Bank Id :: ";
+        cin>>c;
+        cin.ignore(1);
+        cout<<"Enter your Password :: ";
+        cin.getline(pass,19);
+    ifstream fin;
+    fin.open("file.bin",ios::in|ios::binary);
+    if(!fin)
+    {
+        cout<<"file not found";
+    }
+    else{
+        fin.read((char *)this,sizeof(*this));
+        while(!fin.eof())
+        {
+           if(id == c && !strcmp(pass,password))
+           {   flag = 1;
+               show();
+           }
+           fin.read((char*)this,sizeof(*this));
+        }
+        fin.close();
+         if(flag == 0)
+        {
+            cout<<"Password and Id is not valid...please try again\n";
+            flag1++;
+        }
+        else{
+            goto m;
+        }
+        if(flag1<=3)
+        {
+            goto l;
+        }
+        else{
+           cout<<"Your account is Locked due to wrong attempt\n";
+        }
+  
+    } 
+    m:;
+}
+void Bank :: Withdrown()
+{
+      int c,d,flag = 0,flag1 = 1;
+        char pass[20];
+         long int x = sizeof(*this);
+ l:   cout<<"\nEnter your Bank Id :: ";
+        cin>>c;
+        cin.ignore(1);
+        cout<<"Enter your Password :: ";
+        cin.getline(pass,19);
+        cout<<"\nEnter amount to be Withdrown :: ";
+        cin>>d;
+    fstream fin;
+    fin.open("file.bin",ios::in | ios::out | ios::binary);
+    if(!fin)
+    {
+        cout<<"file not found";
+    }
+    else{
+        fin.read((char *)this,sizeof(*this));
+        while(!fin.eof())
+        {
+           if(id == c && !strcmp(pass,password))
+           {
+            b:   if(dep_amt >= d){
+                   flag = 1;
+               dep_amt = dep_amt - d;
+               fin.seekp(fin.tellp()-x);
+               fin.write((char*)this,sizeof(*this));
+               show2();
+               }
+               else{
+                   cout<<"\n*Insufficient Balance*\n";
+                   cout<<"\nEnter amount to be Withdrown :: ";
+                    cin>>d;
+                    goto b;    
+               }
+           }
+           fin.read((char*)this,sizeof(*this));
+        }
+           
+        
+        fin.close();
+        if(flag == 0)
+        {
+            cout<<"Password and Id is not valid...please try again\n";
+            flag1++;
+        }
+        else{
+            goto m;
+        }
+        if(flag1<=3)
+        {
+            goto l;
+        }
+        else{
+           cout<<"Your account is Locked due to wrong attempt\n";
+        }
+    } 
+    m: ; 
+}
+
+void Bank::Deposition()
+{
+     int c,d,flag = 0,flag1 = 1;
+        char pass[20];
+        long int x = sizeof(*this);
+ l:   cout<<"\nEnter your Bank Id :: ";
+        cin>>c;
+        cin.ignore(1);
+        cout<<"Enter your Password :: ";
+        cin.getline(pass,19);
+        cout<<"\nEnter amount to be Deposited :: ";
+        cin>>d;
+  if(d>0){
+    fstream fin;
+    fin.open("file.bin",ios::in|ios::out | ios::binary);
+    if(!fin)
+    {
+        cout<<"file not found";
+    }
+    else{
+        fin.read((char *)this,sizeof(*this));
+        while(!fin.eof())
+        {
+           if(id == c && !strcmp(pass,password))
+           {
+               flag = 1;
+               dep_amt = dep_amt + d;
+               fin.seekp(fin.tellp()-x);
+               fin.write((char*)this,sizeof(*this));
+               show1();
+           }
+           fin.read((char*)this,sizeof(*this));
+        }
+        fin.close();
+        if(flag == 0)
+        {
+            cout<<"Password and Id is not valid...please try again\n";
+            flag1++;
+        }
+        else{
+            goto m;
+        }
+        if(flag1<=3)
+        {
+            goto l;
+        }
+        else{
+           cout<<"account is Locked due to wrong attempt\n";
+        }
+    }
+  }
+  else{
+      cout<<"Entered amount is not valid \n*please enter suitable amount*\n";
+  }
+  m: ;
+}
+
+void Bank::Allaccount()
+{
+    ifstream fin;
+    fin.open("file.bin",ios::in | ios::binary);
+    if(!fin)
+    {
+        cout<<"\nfile not found";
+    }
+    else{
+        fin.read((char *)this,sizeof(*this));
+        while(!fin.eof())
+        {
+
+            show();
+            fin.read((char*)this,sizeof(*this));
+        }
+        fin.close();
+    }
+}
+int Bank::storedata()
+{
+    if(id == 0)
+    {
+        cout<<"\nBank data is not initialized\n";
+        return 0;
+    }
+    else{
+        ofstream fout;
+        fout.open("file.bin",ios::app | ios::binary);
+        fout.write((char *)this,sizeof(*this));
+        fout.close();
+        cout<<"\n**Your account is successfully created**\n\n";
+        return 1;
+    }
+}
+
+    // function for Id
+int b;
+void Id_num(int a)
+{
+    b=a;
+}
+int Id_num1()
+{
+   return b;   
+}
+
+int main()
+{
+
+    cout<<"\n###########----- BANKING SYSTEM -----############\n"<<endl;
+ l:   cout<<" 1. Create Bank account\n";
+    cout<<" 2. deposition to account\n";
+    cout<<" 3. withdrow money from account\n";
+    cout<<" 4. Bank enquirey for account\n";
+    cout<<" 5. Update details of Bank account\n";
+    cout<<" 6. Close account\n";
+    cout<<" 7. List of all accounts (Only admin can exccess)\n\n";
+
+     int x;
+    fstream f1,f2;
+    f2.open("Z.txt",ios::in);
+    f2>>x;
+    Id_num(x);
+    x++;
+    
+    f2.close();
+    f1.open("Z.txt",ios::out);
+    f1<<x;
+    f1.close();
+    cout<<"Enter your choice :: ";
+     int a;
+    cin>>a;
+    if(a == 1)
+    {
+     Bank *b = new Bank;
+     cin.ignore(1);
+      b->read();
+      b->storedata();
+    }else if(a==2)
+    {
+        Bank *b = new Bank;
+        cout<<"****Deposition to Bank account*****\n";
+        b->Deposition();
+     } 
+     else if(a == 3)
+     {
+         Bank *b = new Bank;
+         cout<<"***Withdrown form the bank account***";
+        b->Withdrown();
+     }
+
+     else if(a == 4)
+     {
+         Bank *b = new Bank;
+         cout<<"***Enquiry for Bank account***";
+          b->Info();
+     }
+
+       else if(a == 5)
+     {
+          Bank *b = new Bank;
+         cout<<"***Updation in bank details***";
+         b->Updation();
+     }
+
+     else if(a == 6)
+     {
+         Bank *b = new Bank;
+         cout<<"***Deletion in bank details***";
+         b->Deletion();
+     }
+
+        else if(a == 7)
+     {
+         char admin1[20] = "Bulbul123";
+         Bank *b = new Bank;
+         cout<<"***Details of Bank accounts***";
+         cout<<"\nEnter Admin Id :: ";
+        char admin[20];
+        cin.ignore(1);
+        cin.getline(admin,19);
+        if(!strcmp(admin,admin1))
+        {
+            b->Allaccount();
+        }
+        else{
+            cout<<"*Admin Id is invalid*";
+        }
+     }
+    cout<<"Do you want to cotinue the Banking process (Y/N):: ";
+    char ch;
+m:    cin>>ch;
+    if(ch=='Y' || ch=='y')
+    {
+        goto l;
+    }
+    else if(ch=='N' || ch=='n')
+    {
+        return 0;
+    }
+    else
+    {
+        cout<<"\nInvalid Character is entered\nPlease enter suitable character\n";
+        goto m;
+    }
+}
